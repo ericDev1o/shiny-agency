@@ -1,5 +1,6 @@
-import DefaultPicture from "../../assets/photo.png";
+import DefaultPicture from "../../assets/profile.png";
 import Card from "../../components/Card/";
+import styled from "styled-components";
 
 const freelanceProfiles = [
     {
@@ -19,19 +20,47 @@ const freelanceProfiles = [
     },
 ];
 
+const MainWrapper = styled.main`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const FreelancesH1 = styled.h1`
+    font-size: 30px;
+`;
+
+const FreelancesH2 = styled.h2`
+    font-size: 20px;
+    font-weight: 700;
+`;
+
+const CardsContainer = styled.div`
+    display: grid;
+    margin: 114px 0;
+    gap: 24px;
+    grid-template-rows: 350px 350px;
+    grid-template-columns: repeat(2, 1fr);
+`;
+
 function Freelances() {
     return (
-        <div>
-            <h1>Freelances 👩·💻👨·💻👩·💻</h1>
-            {freelanceProfiles.map((profile, index) => (
-                <Card
-                    key={`${profile.name}-${index}`}
-                    label={profile.jobTitle}
-                    picture={profile.picture}
-                    title={profile.name}
-                />
-            ))}
-        </div>
+        <MainWrapper>
+            <FreelancesH1>Trouvez votre prestataire</FreelancesH1>
+            <FreelancesH2>
+                Chez Shiny nous réunissons les meilleurs profils pour vous.
+            </FreelancesH2>
+            <CardsContainer>
+                {freelanceProfiles.map((profile, index, picture) => (
+                    <Card
+                        key={`${profile.name}-${index}`}
+                        label={profile.jobTitle}
+                        title={profile.name}
+                        picture={profile.picture}
+                    />
+                ))}
+            </CardsContainer>
+        </MainWrapper>
     );
 }
 
