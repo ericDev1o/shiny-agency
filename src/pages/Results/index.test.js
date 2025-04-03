@@ -1,4 +1,55 @@
-import { formatJobTitle, formatQueryParams } from ".";
+import Results, { formatJobTitle, formatQueryParams } from ".";
+import {
+    waitFor,
+    screen,
+    waitForElementToBeRemoved,
+} from "@testing-library/react";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+import { render } from "../../utils/test";
+
+const resultsMockedData = [
+    {
+        title: "dev",
+        description: "",
+    },
+    {
+        title: "front",
+        description: "",
+    },
+];
+
+const server = setupServer(
+    rest.get("http://localhost:800/results", (req, res, ctx) => {
+        return res(ctx.json({ resultsData: resultsMockedData }));
+    })
+);
+
+beforeAll(() => server.listen());
+
+afterEach(() => server.resetHandlers());
+
+afterAll(() => server.close());
+
+describe("The results component", () => {
+    it("should display the results after the data is loaded", async () => {
+        render(<Results />);
+        expect(screen.getByTestId("loader")).toBeTruthy();
+        await waitForElementToBeRemoved(() => screen.getByTestId("loader"));
+        const jobTitleElements = screen.getAllByTestId("job-title");
+        expect(jobTitleElements[0].textContent).toBe("dev");
+        expect(jobTitleElements.length).toBe(2);
+        const jobDescriptionElements = screen.getAllByTestId("job-description");
+        expect(jobDescriptionElements[1].textContent).toBe(
+            resultsMockedData[1].description
+        );
+        expect(jobDescriptionElements.length).toBe(2);
+        await waitFor(() => {
+            expect(screen.getByText("dev")).toBeTruthy();
+            expect(screen.getByText("front")).toBeTruthy();
+        });
+    });
+});
 
 describe("Test de formatJobTitle", () => {
     test("Ajout d'une virgule à un item", () => {
